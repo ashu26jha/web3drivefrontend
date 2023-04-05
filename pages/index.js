@@ -1,10 +1,7 @@
 import Head from 'next/head';
-import { Inter } from 'next/font/google';
+import Navbar from "../components/Navbar"
 import { useEffect, useState } from 'react';
-const inter = Inter({ subsets: ['latin'] })
-async function Connection(){
-  
-}
+
 export default function Home() {
 
   /* Start of metamask connection code */
@@ -78,6 +75,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Navbar />
       <button className="connectButton" id="button" onClick={connectWallet} >{(walletAddress && walletAddress.length>0)  ? `Connected to ${walletAddress.substring(0,4)}...${walletAddress.substring(38,42)}` : "Connect to Metamask 🦊"  }</button>
     </>
   )

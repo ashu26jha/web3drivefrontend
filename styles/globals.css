@@ -2,7 +2,8 @@
     float: right;
     border-radius: 20px;
     border: none;
-    padding: 20px;
+    padding: 20px; 
+    opacity: 0.8;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 .connectButton:hover {
@@ -15,4 +16,9 @@
 }
 body{
     background-color: #100021;
+}
+
+h1{
+    
+    color: aliceblue;
 }
