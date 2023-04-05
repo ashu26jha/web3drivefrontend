@@ -3,6 +3,7 @@
     border-radius: 20px;
     border: none;
     padding: 20px; 
+    margin: 25px;
     opacity: 0.8;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -16,6 +17,9 @@
 }
 body{
     background-color: #100021;
+}
+.logo{
+    margin:10px;
 }
 
 h1{
