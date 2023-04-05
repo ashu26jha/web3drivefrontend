@@ -1,7 +1,6 @@
-import Head from 'next/head'
-import { Inter } from 'next/font/google'
-import { useEffect, useState } from 'react'
-// import {Metamask,getcurrentconnectedAccounts,addWalletListener,connectWallet} from '../components/Metamask';
+import Head from 'next/head';
+import { Inter } from 'next/font/google';
+import { useEffect, useState } from 'react';
 const inter = Inter({ subsets: ['latin'] })
 async function Connection(){
   
@@ -9,9 +8,16 @@ async function Connection(){
 export default function Home() {
 
   /* Start of metamask connection code */
-  
+
   const [walletAddress , setwalletAddress] = useState("");
   useEffect (()=>{
+    if(walletAddress){
+      document.getElementById("button").classList.add("accountActive");
+    }
+    else{
+      console.log(walletAddress)
+      document.getElementById("button").classList.remove("accountActive");
+    }
     getcurrentconnectedAccounts();
     addWalletListener();
   })
@@ -59,7 +65,9 @@ export default function Home() {
       console.log("Please install metamask")
     }
   }
+
   /* Metamask Connection code ends */
+
   return (
     <>
 
@@ -70,8 +78,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <button onClick={connectWallet}>{walletAddress.length>0 ? `Connected to ${walletAddress.substring(0,4)}...${walletAddress.substring(38,42)}` : "Connect"}</button>
+      <button className="connectButton" id="button" onClick={connectWallet} >{(walletAddress && walletAddress.length>0)  ? `Connected to ${walletAddress.substring(0,4)}...${walletAddress.substring(38,42)}` : "Connect to Metamask 🦊"  }</button>
     </>
   )
 }

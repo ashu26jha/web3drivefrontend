@@ -1,0 +1,18 @@
+.connectButton {
+    float: right;
+    border-radius: 20px;
+    border: none;
+    padding: 20px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.connectButton:hover {
+    background-color: #1e1e1e; /* Green */
+    color: rgb(219, 219, 219);
+}
+.accountActive{
+    background-color:#140029; 
+    color: wheat   
+}
+body{
+    background-color: #100021;
+}
