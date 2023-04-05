@@ -1,10 +1,15 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import { useEffect, useState } from 'react'
-import {Metamask,getcurrentconnectedAccounts,addWalletListener,connectWallet} from '../components/Metamask';
+// import {Metamask,getcurrentconnectedAccounts,addWalletListener,connectWallet} from '../components/Metamask';
 const inter = Inter({ subsets: ['latin'] })
-
+async function Connection(){
+  
+}
 export default function Home() {
+
+  /* Start of metamask connection code */
+  
   const [walletAddress , setwalletAddress] = useState("");
   useEffect (()=>{
     getcurrentconnectedAccounts();
@@ -54,6 +59,7 @@ export default function Home() {
       console.log("Please install metamask")
     }
   }
+  /* Metamask Connection code ends */
   return (
     <>
 
@@ -64,7 +70,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Metamask/>
+
       <button onClick={connectWallet}>{walletAddress.length>0 ? `Connected to ${walletAddress.substring(0,4)}...${walletAddress.substring(38,42)}` : "Connect"}</button>
     </>
   )
