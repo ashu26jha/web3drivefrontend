@@ -21,7 +21,14 @@ body{
 .logo{
     margin:10px;
 }
-
+.Navbar{
+    
+    display: flex;
+}
+.ConnectButton{
+    padding-top: 30px;
+    margin-left: auto;
+}
 h1{
     
     color: aliceblue;
