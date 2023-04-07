@@ -1,11 +1,11 @@
 import Head from 'next/head';
 import Navbar from "../components/Navbar";
-
-// import AddFile from "../components/AddFile";
+import { useMoralis } from "react-moralis";
+import Footer from "../components/Footer";
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-
+  const { isWeb3Enabled, chainId } = useMoralis();
   return (
     <>
 
@@ -17,7 +17,7 @@ export default function Home() {
       </Head>
       {/* <Header/> */}
       <Navbar />
-      {/* <AddFile /> */}
+      <Footer />
     </>
   )
 }

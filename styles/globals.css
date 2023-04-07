@@ -29,7 +29,15 @@ body{
     padding-top: 30px;
     margin-left: auto;
 }
-h1{
+h3{
     
-    color: aliceblue;
+    color: rgb(137, 137, 137);
+}
+footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+
 }
