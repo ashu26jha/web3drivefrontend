@@ -89,7 +89,7 @@ export default function AddFile({ abi, contractAddress }) {
             </form>
 
             <div className="dragndrop">
-                <p>{!file ? <div>Drag one or more files to this <i>drop zone</i>.</div> : <div></div>} </p>
+                {!file ? <div>Drag one or more files to this <i>drop zone</i>.</div> : <div></div>}
             </div>
         </div>
     )
