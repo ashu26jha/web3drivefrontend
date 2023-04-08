@@ -1,8 +1,10 @@
 import Head from 'next/head';
 import Navbar from "../components/Navbar";
 import { useMoralis } from "react-moralis";
+import AddFile from "../components/AddFile";
 import Footer from "../components/Footer";
 import contractAddresses from '../constants/networkMapping.json';
+import abi from "../constants/web3drive.json";
 
 
 export default function Home() {
@@ -20,9 +22,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* <Header/> */}
       <Navbar />
-      <Footer web3driveAddress={web3driveAddress}/>
+      <AddFile />
+      <Footer web3driveAddress={web3driveAddress} abi={abi}/>
     </>
   )
 }

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pinata/sdk": "^2.1.0",
     "moralis": "^1.8.0",
     "moralis-v1": "^1.12.0",
     "next": "12.1.5",
@@ -24,5 +25,10 @@
     "eslint-config-next": "12.1.5",
     "postcss": "^8.4.12",
     "tailwindcss": "^3.0.24"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }

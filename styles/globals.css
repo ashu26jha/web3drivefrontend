@@ -1,43 +1,66 @@
-.connectButton {
-    float: right;
-    border-radius: 20px;
-    border: none;
-    padding: 20px; 
-    margin: 25px;
-    opacity: 0.8;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-.connectButton:hover {
-    background-color: #1e1e1e; /* Green */
-    color: rgb(219, 219, 219);
-}
-.accountActive{
-    background-color:#140029; 
-    color: wheat   
-}
-body{
+body {
     background-color: #100021;
-}
-.logo{
-    margin:10px;
-}
-.Navbar{
     
-    display: flex;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
-.ConnectButton{
-    padding-top: 30px;
-    margin-left: auto;
+button{
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
 }
-h3{
-    
-    color: rgb(137, 137, 137);
-}
-footer{
+footer {
     position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
+    /* color: wheat; */
     text-align: center;
+}
+.logo {
+    margin: 10px;
+}
 
+.Navbar {
+    display: flex;
+}
+
+.ConnectButton {
+    padding-top: 30px;
+    margin-left: auto;
+}
+
+.textArea{
+    text-align: center;
+    /* margin: auto; */
+}
+.custom-file-upload{
+    cursor: pointer;
+}
+.choose{
+    text-align: center;
+    padding: 20px;
+}
+#drop_zone {
+    padding: 20px;
+    border-radius: 20px;
+    border-width: 5px;
+    border-style: dashed;
+    border-color: rgb(64, 64, 64);
+    background-color: #190034;
+    color: white;
+    margin: auto;
+    width: 40%;
+    height: 200px;
+}
+
+#drop_zone:hover {
+    opacity: 0.8;
+}
+
+input[type='file'] {
+    display: none;
+}
+.dragndrop{
+    text-align: center;
 }

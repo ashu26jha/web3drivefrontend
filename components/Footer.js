@@ -1,9 +1,8 @@
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useEffect, useState } from "react"
-import abi from "../constants/web3drive.json";
 
 
-export default function Footer({web3driveAddress}) {
+export default function Footer({web3driveAddress,abi}) {
     const {isWeb3Enabled} = useMoralis()
 
     const [owner,setOwner] = useState("");
