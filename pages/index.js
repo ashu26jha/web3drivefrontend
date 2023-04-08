@@ -2,10 +2,15 @@ import Head from 'next/head';
 import Navbar from "../components/Navbar";
 import { useMoralis } from "react-moralis";
 import Footer from "../components/Footer";
-import { useEffect, useState } from 'react';
+import contractAddresses from '../constants/networkMapping.json';
+
 
 export default function Home() {
-  const { isWeb3Enabled, chainId } = useMoralis();
+  
+  const {chainId: chainIdHex } = useMoralis()
+  const chainId = parseInt(chainIdHex);
+  const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
+
   return (
     <>
 
@@ -17,7 +22,7 @@ export default function Home() {
       </Head>
       {/* <Header/> */}
       <Navbar />
-      <Footer />
+      <Footer web3driveAddress={web3driveAddress}/>
     </>
   )
 }
