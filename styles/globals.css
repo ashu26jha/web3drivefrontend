@@ -1,6 +1,5 @@
 body {
     background-color: #100021;
-    
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 button{
@@ -14,7 +13,7 @@ footer {
     left: 0;
     bottom: 0;
     width: 100%;
-    /* color: wheat; */
+    color: wheat;
     text-align: center;
 }
 .logo {
