@@ -12,13 +12,15 @@ export default function AddFile({ web3driveAddress, abi }) {
         abi: abi,
         contractAddress: web3driveAddress,
         functionName: "addFile",
-        params: { name: fileName, ipfshash: IPFSHASH },
-    })
+        params: { ipfsHash: IPFSHASH },
+    });
+
     useEffect(() => {
         if (IPFSHASH) {
             async function updateUI() {
-                const response = await addFile();
-                console.log(response);
+                const txResponse = await addFile();
+                const txReciept = await txResponse.wait(1);
+                console.log(txReciept);
                 setipfshash(null)
             }
             updateUI()
