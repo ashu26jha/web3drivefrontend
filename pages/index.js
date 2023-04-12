@@ -1,15 +1,16 @@
 import Head from 'next/head';
 import Navbar from "../components/Navbar";
 import Cards from "../components/Cards";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useWeb3Contract } from "react-moralis";
 import AddFile from "../components/AddFile";
 import Footer from "../components/Footer";
 import contractAddresses from '../constants/networkMapping.json';
 import abi from "../constants/web3drive.json";
 import GET_ACTIVE_ITEM from "../constants/subGraphQuery"
 import { useQuery } from '@apollo/client';
-import { Loading, Update } from 'web3uikit';
-import { data } from 'autoprefixer';
+import { share } from '../components/Share';
+import axios from 'axios'
+
 
 
 export default function Home() {
@@ -19,7 +20,50 @@ export default function Home() {
   const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
 
   const { loading, error, data: dataRecieved } = useQuery(GET_ACTIVE_ITEM);
-  const alldata = [];
+
+  const { runContractFunction: changeAccessLevel } = useWeb3Contract({
+    abi: abi,
+    contractAddress: web3driveAddress,
+    functionName: "changeAccessLevel",
+    params: { 
+      account:'0x62273214392D066823750fDaf449C57f608Fc26B',
+      tokenId:0,
+      level:3
+    },
+  });
+
+  const { runContractFunction: deleteFile } = useWeb3Contract({
+    abi: abi,
+    contractAddress: web3driveAddress,
+    functionName: "deleteFile",
+    params: { 
+      tokenId:0,
+    },
+  });
+
+  async function Share() {
+
+    const web3driveAddress = contractAddresses['80001'][0]
+    async function RunContractFunction() {
+      const txResponse = await changeAccessLevel();
+      console.log()
+    }
+
+    const a = await RunContractFunction()
+  }
+
+  async function Delete (){
+    async function RunDeleteFunction(){
+      const txResponse = await deleteFile();
+    }
+    await RunDeleteFunction()
+  }
+
+  function Open() {
+    const index = localStorage.getItem("Index Clicked");
+    let url = "https://ipfs.io/ipfs/" + dataRecieved.activeFiles[index].ipfsHash
+    window.open(url);
+  }
 
   return (
     <>
@@ -33,10 +77,12 @@ export default function Home() {
       <Navbar />
       <AddFile web3driveAddress={web3driveAddress} abi={abi} />
       {console.log("SS")}
+      <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal'>Comment</button><button id='internal' onClick={Share}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
       <div className='wrapper'>
-        {dataRecieved ? dataRecieved.activeFiles.map((a,index) => {
-          return(
-          <Cards ipfs={a.ipfsHash} index={index}/>
+        {dataRecieved ? dataRecieved.activeFiles.map((a, index) => {
+          return (
+            
+            <Cards ipfs={a.ipfsHash} index={index} />
           )
         }) : <div className='loading'>Loading...</div>}
 
