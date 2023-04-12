@@ -34,7 +34,7 @@ export default function AddFile({ web3driveAddress, abi }) {
         if (file) {
 
             try {
-
+                
                 const formData = new FormData();
                 formData.append("file", file);
                 console.log("Uploading to pinata")
@@ -66,6 +66,7 @@ export default function AddFile({ web3driveAddress, abi }) {
                         }
                     },
                     "pinataContent": {
+                        "name": `${fileName}`,
                         "imageHash": `${hash}`,
                         "owner": `${owner}`,
                         "comments": [{

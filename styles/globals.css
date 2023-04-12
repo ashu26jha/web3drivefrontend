@@ -2,12 +2,18 @@ body {
     background-color: #100021;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
-button{
+
+button {
+    cursor: pointer;
     margin: 10px;
     padding: 10px;
     border-radius: 5px;
     border: none;
 }
+button :hover{
+    background-color: blue;
+}
+
 footer {
     position: fixed;
     left: 0;
@@ -16,6 +22,7 @@ footer {
     color: wheat;
     text-align: center;
 }
+
 .logo {
     margin: 10px;
 }
@@ -29,17 +36,20 @@ footer {
     margin-left: auto;
 }
 
-.textArea{
+.textArea {
     text-align: center;
     /* margin: auto; */
 }
-.custom-file-upload{
+
+.custom-file-upload {
     cursor: pointer;
 }
-.choose{
+
+.choose {
     text-align: center;
     padding: 20px;
 }
+
 #drop_zone {
     padding: 20px;
     border-radius: 20px;
@@ -60,6 +70,60 @@ footer {
 input[type='file'] {
     display: none;
 }
-.dragndrop{
+
+.dragndrop {
     text-align: center;
+}
+
+.card {
+    position: relative;
+    width: 200px;
+    height: 300px;
+    /*   padding: 20px; */
+    margin: auto;
+    background-color: #d6d6d6;
+    border-radius: 10px;
+
+}
+
+.card .top-left {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-top: 40px solid #100021;
+    border-right: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+    border-left: 40px solid #100021;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+    border-bottom-right-radius: 10px;
+}
+
+.wrapper {
+    padding: 30px;
+    display: flex;
+}
+
+.ipfs {
+    margin-top: 15px;
+    margin-left: 10px;
+}
+
+.name {
+    margin-top: 30%;
+    margin-left: 10px;
+}
+.extension{
+    margin: auto;
+    text-align: center;
+    font-size: 50px;
+    margin-top: 100px;
+    height: 50px;
+    width: 100%;
+    color: black;
+    opacity: 0.2;
+}
+.loading{
+    
+    margin: auto;
+    color: wheat;
 }
