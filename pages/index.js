@@ -15,7 +15,10 @@ export default function Home() {
   const { chainId: chainIdHex } = useMoralis()
   const chainId = parseInt(chainIdHex);
   const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
-
+  let account = '';
+  if(typeof(window)!='undefined'){
+    account = window.ethereum.selectedAddress;
+  }
   const GET_ACTIVE_ITEM = gql`
   {
     activeFiles(
@@ -42,6 +45,7 @@ export default function Home() {
 
   const {data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
   const {data: dataRecievedDeletedFiles} = useQuery(GET_DELETE_ITEM);
+  console.log(dataRecievedActiveFiles)
 
   // console.log((dataRecievedActiveFiles.activeFiles).length)
   
@@ -50,7 +54,9 @@ export default function Home() {
   
   if(dataRecievedActiveFiles){
     for(let i = 0 ; i < dataRecievedActiveFiles.activeFiles.length;i++){
-      activeFilesTokens.push(dataRecievedActiveFiles.activeFiles[i].tokenId);
+      if(dataRecievedActiveFiles.activeFiles[i].Account==account){
+        activeFilesTokens.push(dataRecievedActiveFiles.activeFiles[i].tokenId);
+      }
     }
   }
 
