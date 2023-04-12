@@ -6,10 +6,7 @@ import AddFile from "../components/AddFile";
 import Footer from "../components/Footer";
 import contractAddresses from '../constants/networkMapping.json';
 import abi from "../constants/web3drive.json";
-import GET_ACTIVE_ITEM from "../constants/subGraphQuery"
-import { useQuery } from '@apollo/client';
-import { share } from '../components/Share';
-import axios from 'axios'
+import { gql, useQuery } from '@apollo/client';
 
 
 
@@ -19,16 +16,68 @@ export default function Home() {
   const chainId = parseInt(chainIdHex);
   const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
 
-  const { loading, error, data: dataRecieved } = useQuery(GET_ACTIVE_ITEM);
+  const GET_ACTIVE_ITEM = gql`
+  {
+    activeFiles(
+      first: 5
+      where: {Account_contains: "0x74c7b157af4E5418F03eb928DF309cc98CE38E66"}
+    ) {
+      id
+      tokenId
+      ipfsHash
+      Account
+      Privilege
+    }
+  }
+`
 
+  const GET_DELETE_ITEM = gql`
+  {
+    fileDeleteds(first: 10) {
+      token
+      whoDeleted
+    }
+  }
+  `
+
+  const {data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
+  const {data: dataRecievedDeletedFiles} = useQuery(GET_DELETE_ITEM);
+
+  // console.log((dataRecievedActiveFiles.activeFiles).length)
+  
+  const activeFilesTokens = [];
+  const deletedFileTokens = [];
+  
+  if(dataRecievedActiveFiles){
+    for(let i = 0 ; i < dataRecievedActiveFiles.activeFiles.length;i++){
+      activeFilesTokens.push(dataRecievedActiveFiles.activeFiles[i].tokenId);
+    }
+  }
+
+  if(dataRecievedDeletedFiles){
+    for(let i = 0 ; i < dataRecievedDeletedFiles.fileDeleteds.length;i++){
+      console.log("HEL")
+      deletedFileTokens.push(dataRecievedDeletedFiles.fileDeleteds[i].token);
+    }
+  }
+
+  const tokens = [];
+  for(let i = 0 ; i<activeFilesTokens.length ; i++){
+    if(deletedFileTokens.indexOf(activeFilesTokens[i])==-1){
+      tokens.push(activeFilesTokens[i]);
+    }
+  }
+
+  console.log('Tokens active',tokens);
+  
   const { runContractFunction: changeAccessLevel } = useWeb3Contract({
     abi: abi,
     contractAddress: web3driveAddress,
     functionName: "changeAccessLevel",
-    params: { 
-      account:'0x62273214392D066823750fDaf449C57f608Fc26B',
-      tokenId:0,
-      level:3
+    params: {
+      account: '0x62273214392D066823750fDaf449C57f608Fc26B',
+      tokenId: 0,
+      level: 3
     },
   });
 
@@ -36,8 +85,8 @@ export default function Home() {
     abi: abi,
     contractAddress: web3driveAddress,
     functionName: "deleteFile",
-    params: { 
-      tokenId:0,
+    params: {
+      tokenId: 0,
     },
   });
 
@@ -52,8 +101,8 @@ export default function Home() {
     const a = await RunContractFunction()
   }
 
-  async function Delete (){
-    async function RunDeleteFunction(){
+  async function Delete() {
+    async function RunDeleteFunction() {
       const txResponse = await deleteFile();
     }
     await RunDeleteFunction()
@@ -61,7 +110,7 @@ export default function Home() {
 
   function Open() {
     const index = localStorage.getItem("Index Clicked");
-    let url = "https://ipfs.io/ipfs/" + dataRecieved.activeFiles[index].ipfsHash
+    let url = "https://ipfs.io/ipfs/" + dataRecievedActiveFiles.activeFiles[index].ipfsHash
     window.open(url);
   }
 
@@ -79,11 +128,13 @@ export default function Home() {
       {console.log("SS")}
       <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal'>Comment</button><button id='internal' onClick={Share}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
       <div className='wrapper'>
-        {dataRecieved ? dataRecieved.activeFiles.map((a, index) => {
-          return (
+        {dataRecievedActiveFiles ? dataRecievedActiveFiles.activeFiles.map((a, index) => {
             
-            <Cards ipfs={a.ipfsHash} index={index} />
-          )
+            return (
+              <>
+                {tokens.indexOf(a.tokenId)!=-1?<Cards ipfs={a.ipfsHash} index={index} />:<div></div>}
+              </>
+            )    
         }) : <div className='loading'>Loading...</div>}
 
       </div>
