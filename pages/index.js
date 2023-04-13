@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import contractAddresses from '../constants/networkMapping.json';
 import abi from "../constants/web3drive.json";
 import { gql, useQuery } from '@apollo/client';
+import axios from 'axios'
 
 
 
@@ -15,15 +16,14 @@ export default function Home() {
   const { chainId: chainIdHex } = useMoralis()
   const chainId = parseInt(chainIdHex);
   const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
-  let account = '';
-  if(typeof(window)!='undefined'){
+  let account = '0x74c7b157af4E5418F03eb928DF309cc98CE38E66';
+  if (typeof (window) != 'undefined') {
     account = window.ethereum.selectedAddress;
   }
   const GET_ACTIVE_ITEM = gql`
   {
     activeFiles(
-      first: 5
-      where: {Account_contains: "0x74c7b157af4E5418F03eb928DF309cc98CE38E66"}
+      first: 10
     ) {
       id
       tokenId
@@ -43,46 +43,59 @@ export default function Home() {
   }
   `
 
-  const {data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
-  const {data: dataRecievedDeletedFiles} = useQuery(GET_DELETE_ITEM);
+  const { data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
+  const { data: dataRecievedDeletedFiles } = useQuery(GET_DELETE_ITEM);
+  const activeItems = [];
+  if (dataRecievedActiveFiles) {
+    for (let i = 0; i < dataRecievedActiveFiles.activeFiles.length; i++) {
+      if (dataRecievedActiveFiles.activeFiles[i].Account == account) {
+        const temp = {
+          tokenId: dataRecievedActiveFiles.activeFiles[i].tokenId,
+          ipfs: dataRecievedActiveFiles.activeFiles[i].ipfsHash,
+          account: dataRecievedActiveFiles.activeFiles[i].Account
+        }
+        activeItems.push(temp);
+      }
+    }
+  }
+  console.log('Active Items', activeItems)
   console.log(dataRecievedActiveFiles)
 
-  // console.log((dataRecievedActiveFiles.activeFiles).length)
-  
+
   const activeFilesTokens = [];
   const deletedFileTokens = [];
-  
-  if(dataRecievedActiveFiles){
-    for(let i = 0 ; i < dataRecievedActiveFiles.activeFiles.length;i++){
-      if(dataRecievedActiveFiles.activeFiles[i].Account==account){
+
+  if (dataRecievedActiveFiles) {
+    for (let i = 0; i < dataRecievedActiveFiles.activeFiles.length; i++) {
+      if (dataRecievedActiveFiles.activeFiles[i].Account == account) {
         activeFilesTokens.push(dataRecievedActiveFiles.activeFiles[i].tokenId);
       }
     }
   }
 
-  if(dataRecievedDeletedFiles){
-    for(let i = 0 ; i < dataRecievedDeletedFiles.fileDeleteds.length;i++){
+  if (dataRecievedDeletedFiles) {
+    for (let i = 0; i < dataRecievedDeletedFiles.fileDeleteds.length; i++) {
       console.log("HEL")
       deletedFileTokens.push(dataRecievedDeletedFiles.fileDeleteds[i].token);
     }
   }
 
   const tokens = [];
-  for(let i = 0 ; i<activeFilesTokens.length ; i++){
-    if(deletedFileTokens.indexOf(activeFilesTokens[i])==-1){
+  for (let i = 0; i < activeFilesTokens.length; i++) {
+    if (deletedFileTokens.indexOf(activeFilesTokens[i]) == -1) {
       tokens.push(activeFilesTokens[i]);
     }
   }
 
-  console.log('Tokens active',tokens);
-  
+  console.log('Tokens active', tokens);
+
   const { runContractFunction: changeAccessLevel } = useWeb3Contract({
     abi: abi,
     contractAddress: web3driveAddress,
     functionName: "changeAccessLevel",
     params: {
       account: '0x62273214392D066823750fDaf449C57f608Fc26B',
-      tokenId: 0,
+      tokenId: 1,
       level: 3
     },
   });
@@ -92,7 +105,7 @@ export default function Home() {
     contractAddress: web3driveAddress,
     functionName: "deleteFile",
     params: {
-      tokenId: 0,
+      tokenId: 3,
     },
   });
 
@@ -111,12 +124,51 @@ export default function Home() {
     async function RunDeleteFunction() {
       const txResponse = await deleteFile();
     }
+
     await RunDeleteFunction()
+
+    // Unpin from pinata
+    const index = localStorage.getItem("Index Clicked");
+    let imageIPFShash;
+    await axios.get(`https://ipfs.io/ipfs/${activeItems[index].ipfs}`)
+      .then(function (response) {
+        imageIPFShash = (response.data.imageHash);
+        console.log(imageIPFShash)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + activeItems[index].ipfs;
+    const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
+    console.log('Unpining from pinata')
+    var configJSON = {
+      method: 'delete',
+      url: JSONurl,
+      headers: {
+        pinata_api_key: `577cdfa2517b73ed5ed1`,
+        pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+      }
+    };
+    const resJSON = await axios(configJSON);
+    console.log('JSON unpined',resJSON.data)
+    
+    var configIMG = {
+      method: 'delete',
+      url: IMGurl,
+      headers: {
+        pinata_api_key: `577cdfa2517b73ed5ed1`,
+        pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+      }
+    };
+    const resIMG = await axios(configIMG);
+    console.log(resIMG.data)
+
   }
 
   function Open() {
     const index = localStorage.getItem("Index Clicked");
-    let url = "https://ipfs.io/ipfs/" + dataRecievedActiveFiles.activeFiles[index].ipfsHash
+    let url = "https://ipfs.io/ipfs/" + activeItems[index].ipfs
     window.open(url);
   }
 
@@ -134,13 +186,13 @@ export default function Home() {
       {console.log("SS")}
       <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal'>Comment</button><button id='internal' onClick={Share}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
       <div className='wrapper'>
-        {dataRecievedActiveFiles ? dataRecievedActiveFiles.activeFiles.map((a, index) => {
-            
-            return (
-              <>
-                {tokens.indexOf(a.tokenId)!=-1?<Cards ipfs={a.ipfsHash} index={index} />:<div></div>}
-              </>
-            )    
+        {activeItems ? activeItems.map((a, index) => {
+          console.log(a)
+          return (
+            <>
+              {tokens.indexOf(a.tokenId) != -1 ? <Cards ipfs={a.ipfs} index={index} /> : <div></div>}
+            </>
+          )
         }) : <div className='loading'>Loading...</div>}
 
       </div>
