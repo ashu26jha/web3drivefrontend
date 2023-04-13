@@ -161,3 +161,61 @@ input[type='file'] {
     margin-left: auto;
     margin-right: auto;
 }
+
+
+.container#blur.active{
+    filter: blur(20px);
+    pointer-events: none;
+    user-select: none;
+}
+
+#popup{
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 600px;
+    padding: 50px;
+    box-shadow: 0px 5px 30px rgba(0, 0, 0, .30);
+    background: #ffffff;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+#popup.active{
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+#username{
+    text-align: center;
+    width: 60%;
+    padding: 10px;
+    height: 20px;
+    margin: 15px;
+    border:0;
+    box-shadow:0 10px 15px 4px rgba(0,0,0,0.06);
+}
+
+#email{
+    margin: 15px;
+    padding: 10px;
+    border:0;
+    box-shadow:0 10px 15px 4px rgba(0,0,0,0.06);
+}
+
+.access{
+    border: 0;
+    background-color: #190034;
+    color: white;
+    padding: 12px;
+    cursor: pointer;
+    margin: 15px;
+}
+
+#cross{
+    float: right;
+    text-decoration: none;
+}

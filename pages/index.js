@@ -8,18 +8,32 @@ import contractAddresses from '../constants/networkMapping.json';
 import abi from "../constants/web3drive.json";
 import { gql, useQuery } from '@apollo/client';
 import axios from 'axios'
+import { useState } from 'react';
 
-
+function toggle() {
+  var blur = document.getElementById('blur');
+  blur.classList.toggle('active')
+  var popup = document.getElementById('popup');
+  popup.classList.toggle('active')
+}
 
 export default function Home() {
 
   const { chainId: chainIdHex } = useMoralis()
   const chainId = parseInt(chainIdHex);
   const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
-  let account = '0x74c7b157af4E5418F03eb928DF309cc98CE38E66';
+  let account = '0x62273214392D066823750fDaf449C57f608Fc26B'
+  // if(window){
+  //   account=window.ethereum.selectedAddress;
+  // }
+  const [tokenidindex, setTokenidindex] = useState(null);
+  const [accountShare, setAccountShare] = useState(null);
+  const [levelShare, setLevelShare] = useState(null)
+
   if (typeof (window) != 'undefined') {
     account = window.ethereum.selectedAddress;
   }
+
   const GET_ACTIVE_ITEM = gql`
   {
     activeFiles(
@@ -45,10 +59,15 @@ export default function Home() {
 
   const { data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
   const { data: dataRecievedDeletedFiles } = useQuery(GET_DELETE_ITEM);
+
+  console.log(dataRecievedActiveFiles);
+
   const activeItems = [];
+
   if (dataRecievedActiveFiles) {
     for (let i = 0; i < dataRecievedActiveFiles.activeFiles.length; i++) {
       if (dataRecievedActiveFiles.activeFiles[i].Account == account) {
+        
         const temp = {
           tokenId: dataRecievedActiveFiles.activeFiles[i].tokenId,
           ipfs: dataRecievedActiveFiles.activeFiles[i].ipfsHash,
@@ -58,9 +77,6 @@ export default function Home() {
       }
     }
   }
-  console.log('Active Items', activeItems)
-  console.log(dataRecievedActiveFiles)
-
 
   const activeFilesTokens = [];
   const deletedFileTokens = [];
@@ -72,31 +88,28 @@ export default function Home() {
       }
     }
   }
-
+  
   if (dataRecievedDeletedFiles) {
     for (let i = 0; i < dataRecievedDeletedFiles.fileDeleteds.length; i++) {
-      console.log("HEL")
       deletedFileTokens.push(dataRecievedDeletedFiles.fileDeleteds[i].token);
     }
   }
-
+  // console.log(deletedFileTokens);
   const tokens = [];
   for (let i = 0; i < activeFilesTokens.length; i++) {
     if (deletedFileTokens.indexOf(activeFilesTokens[i]) == -1) {
       tokens.push(activeFilesTokens[i]);
     }
   }
-
-  console.log('Tokens active', tokens);
-
+  // console.log(activeItems)
   const { runContractFunction: changeAccessLevel } = useWeb3Contract({
     abi: abi,
     contractAddress: web3driveAddress,
     functionName: "changeAccessLevel",
     params: {
       account: '0x62273214392D066823750fDaf449C57f608Fc26B',
-      tokenId: 1,
-      level: 3
+      tokenId: 4,
+      level: 3,
     },
   });
 
@@ -105,22 +118,35 @@ export default function Home() {
     contractAddress: web3driveAddress,
     functionName: "deleteFile",
     params: {
-      tokenId: 3,
+      tokenId: tokenidindex,
     },
   });
 
   async function Share() {
+    var form = document.getElementById('form');
+    
+    form.addEventListener('submit',async function (event) {
+      event.preventDefault();
+      var username = document.getElementById('username').value;
+      var email = document.getElementById('email').value;
+      if (email > 3 || email < 0) {
+        alert('Invalid level access')
+      }
+      console.log('1')
+      setAccountShare(username);
+      setLevelShare(email);
+    })
+    console.log(accountShare);
+    await changeAccessLevel();
 
-    const web3driveAddress = contractAddresses['80001'][0]
-    async function RunContractFunction() {
-      const txResponse = await changeAccessLevel();
-      console.log()
-    }
-
-    const a = await RunContractFunction()
   }
 
   async function Delete() {
+
+    const index = localStorage.getItem("Index Clicked");
+    console.log(activeItems[index].ipfs)
+    setTokenidindex(index);
+
     async function RunDeleteFunction() {
       const txResponse = await deleteFile();
     }
@@ -128,12 +154,11 @@ export default function Home() {
     await RunDeleteFunction()
 
     // Unpin from pinata
-    const index = localStorage.getItem("Index Clicked");
+
     let imageIPFShash;
     await axios.get(`https://ipfs.io/ipfs/${activeItems[index].ipfs}`)
       .then(function (response) {
         imageIPFShash = (response.data.imageHash);
-        console.log(imageIPFShash)
       })
       .catch(function (error) {
         console.log(error);
@@ -141,7 +166,6 @@ export default function Home() {
 
     const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + activeItems[index].ipfs;
     const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
-    console.log('Unpining from pinata')
     var configJSON = {
       method: 'delete',
       url: JSONurl,
@@ -151,8 +175,7 @@ export default function Home() {
       }
     };
     const resJSON = await axios(configJSON);
-    console.log('JSON unpined',resJSON.data)
-    
+
     var configIMG = {
       method: 'delete',
       url: IMGurl,
@@ -162,7 +185,6 @@ export default function Home() {
       }
     };
     const resIMG = await axios(configIMG);
-    console.log(resIMG.data)
 
   }
 
@@ -172,31 +194,60 @@ export default function Home() {
     window.open(url);
   }
 
+  // async function handleAccess() {
+    // var form = document.getElementById('form');
+    
+    // form.addEventListener('submit',async function (event) {
+    //   event.preventDefault();
+    //   var username = document.getElementById('username').value;
+    //   var email = document.getElementById('email').value;
+    //   if (email > 3 || email < 0) {
+    //     alert('Invalid level access')
+    //   }
+    //   const username = '0x62273214392D066823750fDaf449C57f608Fc26B';
+    //   const email = 3
+    //   setAccountShare(username);
+    //   setLevelShare(email);
+    // })
+    
+  // }
+
   return (
     <>
+      <div class="container" id="blur">
 
-      <Head>
-        <title>Web3 Drive</title>
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Navbar />
-      <AddFile web3driveAddress={web3driveAddress} abi={abi} />
-      {console.log("SS")}
-      <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal'>Comment</button><button id='internal' onClick={Share}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
-      <div className='wrapper'>
-        {activeItems ? activeItems.map((a, index) => {
-          console.log(a)
-          return (
-            <>
-              {tokens.indexOf(a.tokenId) != -1 ? <Cards ipfs={a.ipfs} index={index} /> : <div></div>}
-            </>
-          )
-        }) : <div className='loading'>Loading...</div>}
+        <Head>
+          <title>Web3 Drive</title>
+          <meta name="description" content="Generated by create next app" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <Navbar />
+        <AddFile web3driveAddress={web3driveAddress} abi={abi} />
+        <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal'>Comment</button><button id='internal' onClick={toggle}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
+        <div className='wrapper'>
+          {activeItems ? activeItems.map((a, index) => {
+            return (
+              <>
+                {tokens.indexOf(a.tokenId) != -1 ? <Cards ipfs={a.ipfs} index={index} /> : <div></div>}
+              </>
+            )
+          }) : <div className='loading'>Loading...</div>}
+
+        </div>
+      </div>
+
+      <div id="popup">
+        Allow access<a href="#" id="cross" onClick={toggle}>X</a>
+        <form id="form" autocomplete="off">
+
+          <input type="text" id="username" placeholder="Enter wallet address" required /><br />
+          <input type="emai" id="email" placeholder="Access Level" required /><br />
+          <input type="submit" className="access" value="Share" onClick={Share}></input>
+        </form>
 
       </div>
-      <Footer web3driveAddress={web3driveAddress} abi={abi} />
+      <Footer web3driveAddress={web3driveAddress} />
     </>
   )
 }

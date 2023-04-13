@@ -13,7 +13,6 @@ export default function Cards({ ipfs, index }) {
     if (ipfs) {
         axios.get(`https://ipfs.io/ipfs/${ipfs}`)
             .then(function (response) {
-                console.log(response.data.name);
                 setImageHash(response.data.imageHash)
                 setName(response.data.name)
             })
@@ -21,7 +20,6 @@ export default function Cards({ ipfs, index }) {
                 console.log(error);
             });
     }
-    console.log(imageHash)
     let extension = ""
     if(name!=null){
         extension = name.slice(name.indexOf('.') + 1,);
