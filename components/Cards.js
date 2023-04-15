@@ -4,7 +4,6 @@ import axios from 'axios'
 export default function Cards({ ipfs, index }) {
     function handleClick() {
         localStorage.setItem("Index Clicked", index);
-        console.log(localStorage.getItem("Index Clicked"));
         document.getElementById("hideNavbar").style.display = 'flex';
     }
 

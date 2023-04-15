@@ -2,13 +2,17 @@ body {
     background-color: #100021;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
-
+.btn{
+    border-color: #fff;
+}
 button {
+    background-color: #190034;
+    color: #e1e1e1;
+    border: 2px solid #fff;
     cursor: pointer;
-    margin: 10px;
     padding: 10px;
     border-radius: 5px;
-    border: none;
+    border-color: #2b0073;
 }
 
 button :hover {
@@ -44,6 +48,9 @@ footer {
 
 .custom-file-upload {
     cursor: pointer;
+    display: flex;
+    margin: auto;
+    justify-content: center;
 }
 
 .choose {
@@ -145,8 +152,11 @@ input[type='file'] {
 }
 #hideNavbar{
     display: none;
-    margin: auto;
-    text-align: center;
+    /* margin: auto; */
+    /* text-align: center; */
+    /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
 }
 .Navbar{
     text-align: center;
@@ -156,10 +166,12 @@ input[type='file'] {
 }
 
 #internal{
+    width: 100px;
     text-align: center;
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
+    
 }
 
 
@@ -173,11 +185,12 @@ input[type='file'] {
     position: fixed;
     top: 40%;
     left: 50%;
+    color: #ffffff;
     transform: translate(-50%,-50%);
     width: 600px;
     padding: 50px;
     box-shadow: 0px 5px 30px rgba(0, 0, 0, .30);
-    background: #ffffff;
+    background: #1c003d;
     visibility: hidden;
     opacity: 0;
     transition: 0.5s;
@@ -202,12 +215,13 @@ input[type='file'] {
 #email{
     margin: 15px;
     padding: 10px;
+    text-align: center;
     border:0;
     box-shadow:0 10px 15px 4px rgba(0,0,0,0.06);
 }
 
 .access{
-    border: 0;
+    border: 2px solid #fff;
     background-color: #190034;
     color: white;
     padding: 12px;
@@ -218,4 +232,15 @@ input[type='file'] {
 #cross{
     float: right;
     text-decoration: none;
+}
+
+.upload{
+    margin: 10px;
+}
+a{
+    color:#ffffff;
+}
+
+#push-right{
+    margin-left: 5px;
 }
