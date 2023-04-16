@@ -10,13 +10,6 @@ import { gql, useQuery } from '@apollo/client';
 import axios from 'axios'
 import { useState } from 'react';
 
-function toggle() {
-  var blur = document.getElementById('blur');
-  blur.classList.toggle('active')
-  var popup = document.getElementById('popup');
-  popup.classList.toggle('active')
-}
-
 export default function Home() {
   
   const { chainId: chainIdHex } = useMoralis()
@@ -47,33 +40,53 @@ export default function Home() {
 `
 
   const { data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
+  console.log(dataRecievedActiveFiles);
 
   console.log(dataRecievedActiveFiles);
 
-  const activeItems = [];
-  const tokens = [];
+  const activeItems = new Array (100);
+  const tokensToHash = new Array (100);
 
   if (dataRecievedActiveFiles) {
     for (let i = 0; i < dataRecievedActiveFiles.activeFiles.length; i++) {
-      if (dataRecievedActiveFiles.activeFiles[i].Account == account) {
-        
+      
+      let latestHash;
+
+      const accountGraph = dataRecievedActiveFiles.activeFiles[i].account;
+      const tokenGraph = dataRecievedActiveFiles.activeFiles[i].tokenId;
+      const deletedGraph = dataRecievedActiveFiles.activeFiles[i].deleted;
+      
+      if(tokensToHash[tokenGraph]){
+        latestHash = tokensToHash[tokenGraph];
+      }
+      else{
+        latestHash = dataRecievedActiveFiles.activeFiles[i].ipfsHash;
+        tokensToHash[tokenGraph] = latestHash;
+      }
+
+      if(deletedGraph){
+        latestHash = 'Deleted';
+        tokensToHash[tokenGraph] = latestHash;
+      }
+
+      if(accountGraph==account){
         const temp = {
-          tokenId: dataRecievedActiveFiles.activeFiles[i].tokenId,
-          ipfs: dataRecievedActiveFiles.activeFiles[i].ipfsHash,
-          account: dataRecievedActiveFiles.activeFiles[i].Account
+          tokenId: tokenGraph,
+          ipfs: latestHash,
+          account: tokenGraph
         }
-        activeItems.push(temp);
+        activeItems[tokenGraph] = temp;
       }
     }
   }
-
+  console.log(tokensToHash);
   const { runContractFunction: changeAccessLevel } = useWeb3Contract({
     abi: abi,
     contractAddress: web3driveAddress,
     functionName: "changeAccessLevel",
     params: {
       account: accountShare,
-      tokenId: 4,
+      tokenId: TokenID,
       level: levelShare,
     },
   });
@@ -88,8 +101,11 @@ export default function Home() {
   });
 
   async function Share() {
+
     var form = document.getElementById('form');
-    
+    const index = localStorage["Index Clicked"];
+    setTokenID(index);
+
     form.addEventListener('submit',async function (event) {
       event.preventDefault();
       var username = document.getElementById('username').value;
@@ -97,7 +113,6 @@ export default function Home() {
       if (email > 3 || email < 0) {
         alert('Invalid level access')
       }
-      console.log('1')
       setAccountShare(username);
       setLevelShare(email);
     })
@@ -107,7 +122,6 @@ export default function Home() {
   }
 
   async function Delete() {
-
     const index = localStorage.getItem("Index Clicked");
     console.log(activeItems[index].ipfs)
     setTokenidindex(index);
@@ -121,15 +135,15 @@ export default function Home() {
     // Unpin from pinata
 
     let imageIPFShash;
-    await axios.get(`https://ipfs.io/ipfs/${activeItems[index].ipfs}`)
+    await axios.get(`https://ipfs.io/ipfs/${tokensToHash[index]}`)
       .then(function (response) {
         imageIPFShash = (response.data.imageHash);
       })
       .catch(function (error) {
         console.log(error);
       });
-
-    const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + activeItems[index].ipfs;
+      console.log(`https://ipfs.io/ipfs/${tokensToHash[index]}`)
+    const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + tokensToHash[index]
     const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
     var configJSON = {
       method: 'delete',
@@ -154,7 +168,7 @@ export default function Home() {
   }
   function Open() {
     const index = localStorage.getItem("Index Clicked");
-    let url = "https://ipfs.io/ipfs/" + activeItems[index].ipfs
+    let url = "https://ipfs.io/ipfs/" + tokensToHash[index]
     window.open(url);
   }
   function reset(){
@@ -164,9 +178,19 @@ export default function Home() {
   }
 
   async function Edit(){
-    setTokenID(7);
+    const tokenIDstorage = localStorage.getItem("Index Clicked");
+    setTokenID(tokenIDstorage);
   }
 
+  function toggle() {
+    var blur = document.getElementById('blur');
+    blur.classList.toggle('active')
+    var popup = document.getElementById('popup');
+    popup.classList.toggle('active');
+    console.log('Toggle Func')
+    Share();
+  }
+  console.log(tokensToHash[0  ])
   return (
     <>
       <div class="container" id="blur" >
@@ -180,13 +204,13 @@ export default function Home() {
           <Navbar />
           <AddFile web3driveAddress={web3driveAddress} abi={abi} tokenId={TokenID} />
         </div>
-        <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal' onClick={Edit} >Edit</button><button id='internal'>Comment</button><button id='internal' onClick={toggle}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
+        <div id='hideNavbarl'><button id='internal' onClick={Open}>Open</button><button id='internal' onClick={Edit} >Edit</button><button id='internal'>Comment</button><button id='internal' onClick={toggle}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
         
         <div className='wrapper'>
-          {activeItems ? activeItems.map((a, index) => {
+          {activeItems ? activeItems.map((a) => {
             return (
               <>
-                {tokens.indexOf(a.tokenId) != -1 ? <Cards ipfs={a.ipfs} index={index} /> : <div></div>}
+                {tokensToHash[a.tokenId]!='Deleted' ? <Cards ipfs={tokensToHash[a.tokenId]} tokenId={a.tokenId} /> : <div></div>}
               </>
             )
           }) : <div className='loading'>Loading...</div>}

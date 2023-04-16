@@ -1,9 +1,10 @@
 import { useState } from "react"
 import axios from 'axios'
 
-export default function Cards({ ipfs, index }) {
+export default function Cards({ ipfs, tokenId }) {
+    
     function handleClick() {
-        localStorage.setItem("Index Clicked", index);
+        localStorage.setItem("Index Clicked", tokenId);
         document.getElementById("hideNavbar").style.display = 'flex';
     }
 
@@ -19,7 +20,9 @@ export default function Cards({ ipfs, index }) {
                 console.log(error);
             });
     }
+
     let extension = ""
+    
     if(name!=null){
         extension = name.slice(name.indexOf('.') + 1,);
     }

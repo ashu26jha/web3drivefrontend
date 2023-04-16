@@ -1,0 +1,86 @@
+import { Address, BigInt } from "@graphprotocol/graph-ts"
+import {
+  accessLevel as accessLevelEvent,
+  fileAdded as fileAddedEvent,
+  fileDeleted as fileDeletedEvent
+} from "../generated/Web3Drive/Web3Drive"
+import { accessLevel, fileAdded, fileDeleted, activeFile } from "../generated/schema"
+
+export function handleaccessLevel(event: accessLevelEvent): void {
+
+  let accessLevelObject =  accessLevel.load(getIdFromEventParams(event.params.token,event.params.gotAccess));
+  let activeFileObject = activeFile.load(getIdFromEventParams(event.params.token,event.params.gotAccess));
+
+  if(!accessLevelObject){
+    accessLevelObject = new accessLevel(getIdFromEventParams(event.params.token,event.params.gotAccess));
+  }
+
+  if(!activeFileObject){
+    activeFileObject = new activeFile(getIdFromEventParams(event.params.token,event.params.gotAccess));
+  }
+
+  accessLevelObject.gotAccess = event.params.gotAccess;
+  accessLevelObject.token = event.params.token;
+  accessLevelObject.AdminPrivilege = event.params.AdminPrivilege;
+
+  activeFileObject.Account = event.params.gotAccess;
+  activeFileObject.tokenId = event.params.token;
+  activeFileObject.Privilege = event.params.AdminPrivilege;
+
+  accessLevelObject.save();
+  activeFileObject.save();
+}
+
+export function handlefileAdded(event: fileAddedEvent): void {
+
+  let fileAddedObject =  fileAdded.load(getIdFromEventParams(event.params.tokenId,event.params.Owner));
+  let activeFileObject = activeFile.load(getIdFromEventParams(event.params.tokenId,event.params.Owner));
+
+  if(!fileAddedObject){
+    fileAddedObject = new fileAdded(getIdFromEventParams(event.params.tokenId,event.params.Owner));
+  }
+
+  if(!activeFileObject){
+    activeFileObject = new activeFile(getIdFromEventParams(event.params.tokenId,event.params.Owner));
+  }
+
+  fileAddedObject.Owner = event.params.Owner;
+  fileAddedObject.tokenId = event.params.tokenId;
+  fileAddedObject.ipfsHash = event.params.ipfsHash;
+
+  activeFileObject.Account = event.params.Owner;
+  activeFileObject.tokenId = event.params.tokenId;
+  activeFileObject.ipfsHash = event.params.ipfsHash;
+  activeFileObject.Privilege = 3
+
+  fileAddedObject.save()
+  activeFileObject.save()
+}
+
+export function handlefileDeleted(event: fileDeletedEvent): void {
+
+  let fileDeletedObject = fileDeleted.load(getIdFromEventParams(event.params.token,event.params.whoDeleted));
+  let activeFileObject = activeFile.load(getIdFromEventParams(event.params.token,event.params.whoDeleted));
+
+  if(!activeFileObject){
+    activeFileObject = new activeFile(getIdFromEventParams(event.params.token,event.params.whoDeleted));
+  }
+
+  if(!fileDeletedObject){
+    fileDeletedObject = new fileDeleted(getIdFromEventParams(event.params.token,event.params.whoDeleted));
+  }
+
+  fileDeletedObject.token = event.params.token;
+  fileDeletedObject.whoDeleted = event.params.whoDeleted;
+
+  activeFileObject.Account = event.params.whoDeleted;
+  activeFileObject.tokenId = event.params.token;
+
+  fileDeletedObject.save();
+  activeFileObject.save();
+
+}
+
+function getIdFromEventParams(tokenId: BigInt, address: Address) : string {
+  return tokenId.toHexString() + address.toHexString();
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import axios from "axios";
-export default function AddFile({ web3driveAddress, abi, clicked, tokenId }) {
+export default function AddFile({ web3driveAddress, abi, tokenId }) {
     const { isWeb3Enabled } = useMoralis();
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState("No file Selected");
@@ -112,44 +112,43 @@ export default function AddFile({ web3driveAddress, abi, clicked, tokenId }) {
 
                 const res = await axios(config);
                 console.log("JSON TO IPFS",res)
-                // setipfshash(res.data.IpfsHash);
                 // Unpin from IPFS
-                // const hashfromtoken = await tokenIDtoIPFS();
-                // console.log('HASH FROM TOKEN',hashfromtoken)
-                // let imageIPFShash;
-                // await axios.get(`https://ipfs.io/ipfs/${hashfromtoken}`)
-                // .then(function (response) {
-                //     imageIPFShash = (response.data.imageHash);
-                // })
-                // .catch(function (error) {
-                //     console.log(error);
-                // });
-                // console.log('IMAGE TO BE UNPINNED',imageIPFShash)
+                const hashfromtoken = await tokenIDtoIPFS();
+                console.log('HASH FROM TOKEN',hashfromtoken)
+                let imageIPFShash;
+                await axios.get(`https://ipfs.io/ipfs/${hashfromtoken}`)
+                .then(function (response) {
+                    imageIPFShash = (response.data.imageHash);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+                console.log('IMAGE TO BE UNPINNED',imageIPFShash)
 
-                // const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + hashfromtoken;
-                // const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
+                const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + hashfromtoken;
+                const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
 
-                // var configJSON = {
-                //     method: 'delete',
-                //     url: JSONurl,
-                //     headers: {
-                //       pinata_api_key: `577cdfa2517b73ed5ed1`,
-                //       pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
-                //     }
-                // };
-                // const resJSON = await axios(configJSON);
-                // console.log('JSON DELETED : ',resJSON)
+                var configJSON = {
+                    method: 'delete',
+                    url: JSONurl,
+                    headers: {
+                      pinata_api_key: `577cdfa2517b73ed5ed1`,
+                      pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                    }
+                };
+                const resJSON = await axios(configJSON);
+                console.log('JSON DELETED : ',resJSON)
               
-                // var configIMG = {
-                //     method: 'delete',
-                //     url: IMGurl,
-                //     headers: {
-                //       pinata_api_key: `577cdfa2517b73ed5ed1`,
-                //       pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
-                //     }
-                // };
-                // const resIMG = await axios(configIMG);
-                // console.log('IMAGE DELETED',resIMG)
+                var configIMG = {
+                    method: 'delete',
+                    url: IMGurl,
+                    headers: {
+                      pinata_api_key: `577cdfa2517b73ed5ed1`,
+                      pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                    }
+                };
+                const resIMG = await axios(configIMG);
+                console.log('IMAGE DELETED',resIMG)
                 // //Edit the smart contract
                 console.log(res.data.IpfsHash);
                 setUpdateHash(res.data.IpfsHash)
