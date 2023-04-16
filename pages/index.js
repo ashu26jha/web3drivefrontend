@@ -166,9 +166,18 @@ export default function Home() {
     const resIMG = await axios(configIMG);
 
   }
-  function Open() {
+  async function Open() {
     const index = localStorage.getItem("Index Clicked");
-    let url = "https://ipfs.io/ipfs/" + tokensToHash[index]
+    let url;
+    await axios.get(`https://ipfs.io/ipfs/${tokensToHash[index]}`)
+            .then(function (response) {
+                url = 'https://ipfs.io/ipfs/'+response.data.imageHash
+                setName(response.data.name)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
     window.open(url);
   }
   function reset(){
