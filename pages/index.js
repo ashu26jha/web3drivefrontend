@@ -8,7 +8,7 @@ import contractAddresses from '../constants/networkMapping.json';
 import abi from "../constants/web3drive.json";
 import { gql, useQuery } from '@apollo/client';
 import axios from 'axios'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   
@@ -29,7 +29,7 @@ export default function Home() {
   const GET_ACTIVE_ITEM = gql`
   {
     activeFiles(
-      first: 30
+      first: 100
     ) {
       tokenId
       account 
@@ -79,7 +79,7 @@ export default function Home() {
       }
     }
   }
-  console.log(tokensToHash);
+
   const { runContractFunction: changeAccessLevel } = useWeb3Contract({
     abi: abi,
     contractAddress: web3driveAddress,
@@ -99,6 +99,28 @@ export default function Home() {
       tokenId: tokenidindex,
     },
   });
+
+  useEffect(()=>{
+    if(levelShare){
+      async function updateUI(){
+        const txResponse = await changeAccessLevel();
+        setLevelShare(null);
+        setAccountShare(null);
+
+      }
+      updateUI();
+    }
+  },[levelShare])
+
+  useEffect(()=>{
+    if(tokenidindex){
+      async function updateUI() {
+        const txResponse = await deleteFile();
+        setTokenidindex(null)
+      }
+      updateUI();
+    }
+  },[tokenidindex])
 
   async function Share() {
 
@@ -124,27 +146,22 @@ export default function Home() {
   async function Delete() {
     const index = localStorage.getItem("Index Clicked");
     console.log(activeItems[index].ipfs)
-    setTokenidindex(index);
-
-    async function RunDeleteFunction() {
-      const txResponse = await deleteFile();
-    }
-
-    await RunDeleteFunction()
-
-    // Unpin from pinata
+    
 
     let imageIPFShash;
+    console.log(`https://ipfs.io/ipfs/${tokensToHash[index]}`);
     await axios.get(`https://ipfs.io/ipfs/${tokensToHash[index]}`)
       .then(function (response) {
         imageIPFShash = (response.data.imageHash);
+        console.log(`IMAGES HASH IS : ${imageIPFShash}`);
       })
       .catch(function (error) {
         console.log(error);
       });
-      console.log(`https://ipfs.io/ipfs/${tokensToHash[index]}`)
     const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + tokensToHash[index]
-    const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
+    const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + 'QmWhc8oCFgY1ZU52cP2QosVxiKhCQpyXeDKuQXwTiPYCun';
+    // console.log(JSONurl);
+    console.log(IMGurl);
     var configJSON = {
       method: 'delete',
       url: JSONurl,
@@ -154,7 +171,7 @@ export default function Home() {
       }
     };
     const resJSON = await axios(configJSON);
-
+    console.log(resJSON)
     var configIMG = {
       method: 'delete',
       url: IMGurl,
@@ -164,6 +181,9 @@ export default function Home() {
       }
     };
     const resIMG = await axios(configIMG);
+    console.log(resIMG);
+
+    setTokenidindex(index);
 
   }
   async function Open() {
@@ -183,7 +203,7 @@ export default function Home() {
   function reset(){
     localStorage.clear();
     document.getElementById("hideNavbar").style.display = 'none';
-    // setTokenID(null);
+
   }
 
   async function Edit(){
@@ -244,3 +264,5 @@ export default function Home() {
     </>
   )
 }
+
+// Fix idea allocate another useState to changeAccess tokenId

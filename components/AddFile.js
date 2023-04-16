@@ -208,7 +208,7 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                     };
 
                     const res = await axios(config);
-                    setipfshash(res.data.IpfsHash);
+                    // setipfshash(res.data.IpfsHash);
                 }
                 catch (e) {
                     console.log(e);

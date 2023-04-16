@@ -10,8 +10,9 @@ export default function Cards({ ipfs, tokenId }) {
 
     const [imageHash, setImageHash] = useState(ipfs);
     const [name,setName] = useState(null);
-    if (ipfs) {
-        axios.get(`https://ipfs.io/ipfs/${ipfs}`)
+    async function updateUI(){
+        console.log(ipfs);
+        await axios.get(`https://ipfs.io/ipfs/${ipfs}`)
             .then(function (response) {
                 setImageHash(response.data.imageHash)
                 setName(response.data.name)
@@ -19,6 +20,9 @@ export default function Cards({ ipfs, tokenId }) {
             .catch(function (error) {
                 console.log(error);
             });
+    }
+    if(ipfs){
+        updateUI();
     }
 
     let extension = ""
