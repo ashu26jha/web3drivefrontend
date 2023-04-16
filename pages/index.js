@@ -204,7 +204,7 @@ export default function Home() {
           <Navbar />
           <AddFile web3driveAddress={web3driveAddress} abi={abi} tokenId={TokenID} />
         </div>
-        <div id='hideNavbarl'><button id='internal' onClick={Open}>Open</button><button id='internal' onClick={Edit} >Edit</button><button id='internal'>Comment</button><button id='internal' onClick={toggle}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
+        <div id='hideNavbar'><button id='internal' onClick={Open}>Open</button><button id='internal' onClick={Edit} >Edit</button><button id='internal' onClick={toggle}>Share</button><button id='internal' onClick={Delete}>Delete</button></div>
         
         <div className='wrapper'>
           {activeItems ? activeItems.map((a) => {
