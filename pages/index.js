@@ -18,17 +18,17 @@ function toggle() {
 }
 
 export default function Home() {
+  
   const { chainId: chainIdHex } = useMoralis()
   const chainId = parseInt(chainIdHex);
   const web3driveAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null
-  let account = '0x62273214392D066823750fDaf449C57f608Fc26B'
-  // if(window){
-  //   account=window.ethereum.selectedAddress;
-  // }
+  let account;
+
   const [tokenidindex, setTokenidindex] = useState(null);
   const [accountShare, setAccountShare] = useState(null);
   const [levelShare, setLevelShare] = useState(null);
   const [TokenID,setTokenID] = useState(null);
+
   if (typeof (window) != 'undefined') {
     account = window.ethereum.selectedAddress;
   }
@@ -38,30 +38,20 @@ export default function Home() {
     activeFiles(
       first: 30
     ) {
-      id
       tokenId
+      account 
       ipfsHash
-      Account
-      Privilege
+      deleted
     }
   }
 `
 
-  const GET_DELETE_ITEM = gql`
-  {
-    fileDeleteds(first: 20) {
-      token
-      whoDeleted
-    }
-  }
-  `
-
   const { data: dataRecievedActiveFiles } = useQuery(GET_ACTIVE_ITEM);
-  const { data: dataRecievedDeletedFiles } = useQuery(GET_DELETE_ITEM);
 
   console.log(dataRecievedActiveFiles);
 
   const activeItems = [];
+  const tokens = [];
 
   if (dataRecievedActiveFiles) {
     for (let i = 0; i < dataRecievedActiveFiles.activeFiles.length; i++) {
@@ -77,30 +67,6 @@ export default function Home() {
     }
   }
 
-  const activeFilesTokens = [];
-  const deletedFileTokens = [];
-
-  if (dataRecievedActiveFiles) {
-    for (let i = 0; i < dataRecievedActiveFiles.activeFiles.length; i++) {
-      if (dataRecievedActiveFiles.activeFiles[i].Account == account) {
-        activeFilesTokens.push(dataRecievedActiveFiles.activeFiles[i].tokenId);
-      }
-    }
-  }
-  
-  if (dataRecievedDeletedFiles) {
-    for (let i = 0; i < dataRecievedDeletedFiles.fileDeleteds.length; i++) {
-      deletedFileTokens.push(dataRecievedDeletedFiles.fileDeleteds[i].token);
-    }
-  }
-  // console.log(deletedFileTokens);
-  const tokens = [];
-  for (let i = 0; i < activeFilesTokens.length; i++) {
-    if (deletedFileTokens.indexOf(activeFilesTokens[i]) == -1) {
-      tokens.push(activeFilesTokens[i]);
-    }
-  }
-  // console.log(activeItems)
   const { runContractFunction: changeAccessLevel } = useWeb3Contract({
     abi: abi,
     contractAddress: web3driveAddress,
