@@ -159,7 +159,7 @@ export default function Home() {
         console.log(error);
       });
     const JSONurl = 'https://api.pinata.cloud/pinning/unpin/' + tokensToHash[index]
-    const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + 'QmWhc8oCFgY1ZU52cP2QosVxiKhCQpyXeDKuQXwTiPYCun';
+    const IMGurl = 'https://api.pinata.cloud/pinning/unpin/' + imageIPFShash;
     // console.log(JSONurl);
     console.log(IMGurl);
     var configJSON = {
