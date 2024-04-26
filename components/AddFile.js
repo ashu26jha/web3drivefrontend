@@ -69,8 +69,8 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                     maxBodyLength: "Infinity",
                     headers: {
                         'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-                        pinata_api_key: `577cdfa2517b73ed5ed1`,
-                        pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                        pinata_api_key: `0658da334e87d1d5fee8`,
+                        pinata_secret_api_key: `9a6818e300e13a321f178aa60b95882f0938d529c1a85e6ca3aeb908b547b126`,
                     }
                 });
                 const hash = resFile.data.IpfsHash;
@@ -104,8 +104,8 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                     url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
                     headers: {
                         'Content-Type': 'application/json',
-                        pinata_api_key: `577cdfa2517b73ed5ed1`,
-                        pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                        pinata_api_key: `0658da334e87d1d5fee8`,
+                        pinata_secret_api_key: `9a6818e300e13a321f178aa60b95882f0938d529c1a85e6ca3aeb908b547b126`,
                     },
                     data: data
                 };
@@ -132,8 +132,8 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                     method: 'delete',
                     url: JSONurl,
                     headers: {
-                      pinata_api_key: `577cdfa2517b73ed5ed1`,
-                      pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                      pinata_api_key: `0658da334e87d1d5fee8`,
+                      pinata_secret_api_key: `9a6818e300e13a321f178aa60b95882f0938d529c1a85e6ca3aeb908b547b126`,
                     }
                 };
                 const resJSON = await axios(configJSON);
@@ -143,8 +143,8 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                     method: 'delete',
                     url: IMGurl,
                     headers: {
-                      pinata_api_key: `577cdfa2517b73ed5ed1`,
-                      pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                      pinata_api_key: `0658da334e87d1d5fee8`,
+                      pinata_secret_api_key: `9a6818e300e13a321f178aa60b95882f0938d529c1a85e6ca3aeb908b547b126`,
                     }
                 };
                 const resIMG = await axios(configIMG);
@@ -166,8 +166,8 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                         maxBodyLength: "Infinity",
                         headers: {
                             'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-                            pinata_api_key: `577cdfa2517b73ed5ed1`,
-                            pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                            pinata_api_key: `0658da334e87d1d5fee8`,
+                            pinata_secret_api_key: `9a6818e300e13a321f178aa60b95882f0938d529c1a85e6ca3aeb908b547b126`,
                         }
                     });
                     const hash = resFile.data.IpfsHash;
@@ -201,8 +201,8 @@ export default function AddFile({ web3driveAddress, abi, tokenId }) {
                         url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
                         headers: {
                             'Content-Type': 'application/json',
-                            pinata_api_key: `577cdfa2517b73ed5ed1`,
-                            pinata_secret_api_key: `135beabb2b4aa3e5939bb6ea4dde06356d96b3fc99cb953d383817d1befd5049`,
+                            pinata_api_key: `0658da334e87d1d5fee8`,
+                            pinata_secret_api_key: `9a6818e300e13a321f178aa60b95882f0938d529c1a85e6ca3aeb908b547b126`,
                         },
                         data: data
                     };
